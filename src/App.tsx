@@ -1,6 +1,7 @@
 import { useCallback, useRef, useState } from "react";
 import "./App.css";
 import { Composer } from "./components/Composer";
+import { ConfirmDialog } from "./components/ConfirmDialog";
 import { Feed } from "./components/Feed";
 import { SettingsPanel } from "./components/SettingsPanel";
 import { Sidebar } from "./components/Sidebar";
@@ -13,6 +14,7 @@ function App() {
   const { text, tags, canSubmit, setText, toggleTag, reset } = useComposer();
   const { posts, addPost, removePost, isSaving, error } = usePosts();
   const [view, setView] = useState<View>("feed");
+  const [pendingDeleteId, setPendingDeleteId] = useState<number | null>(null);
   const composerInputRef = useRef<HTMLTextAreaElement>(null);
 
   async function handleAddEntry() {
@@ -22,15 +24,27 @@ function App() {
     setView("feed");
   }
 
-  // Delete requires confirmation (ADR-005); the entry only disappears
-  // when the backend confirms.
-  const handleDeleteEntry = useCallback(
-    (id: number) => {
-      if (!window.confirm("Deze entry verwijderen?")) return;
-      void removePost(id);
-    },
-    [removePost],
-  );
+  // Delete requires confirmation (ADR-005) via a custom dialog — this is
+  // an app, not a web page, so no window.confirm. The entry only
+  // disappears when the backend confirms.
+  const handleDeleteEntry = useCallback((id: number) => {
+    setPendingDeleteId(id);
+  }, []);
+
+  const pendingPost =
+    pendingDeleteId == null
+      ? null
+      : (posts.find((post) => post.id === pendingDeleteId) ?? null);
+
+  const handleConfirmDelete = useCallback(() => {
+    if (pendingDeleteId == null) return; // js-early-exit
+    void removePost(pendingDeleteId);
+    setPendingDeleteId(null);
+  }, [pendingDeleteId, removePost]);
+
+  const handleCancelDelete = useCallback(() => {
+    setPendingDeleteId(null);
+  }, []);
 
   const isSettings = view === "settings";
 
@@ -74,6 +88,20 @@ function App() {
         )}
       </main>
       </div>
+
+      {pendingPost ? (
+        <ConfirmDialog
+          title="[Entry verwijderen?]"
+          body={
+            pendingPost.text.length > 140
+              ? `${pendingPost.text.slice(0, 140)}…`
+              : pendingPost.text
+          }
+          confirmLabel="Verwijderen"
+          onConfirm={handleConfirmDelete}
+          onCancel={handleCancelDelete}
+        />
+      ) : null}
     </div>
   );
 }
