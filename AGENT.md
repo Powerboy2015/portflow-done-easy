@@ -55,10 +55,12 @@ Rules for tags (see ADR-002):
 
 - User chooses a folder on first run (Tauri dialog). Cancel → block + retry (no temp mode, no quit).
 - SQLite DB lives in Tauri app-data (not inside chosen folder), stores `chosen_folder` pointer + proofs metadata (file paths, not blobs).
-- Rust access via sqlx raw, no ORM. Normalized: `proofs` / `proof_images` / `proof_tags` / `settings`.
+- Rust access via sqlx raw, no ORM. Target schema: `proofs` / `proof_images` / `proof_tags` / `settings`.
 - Images are COPIED into `<chosen-folder>/proofs/<uuid>.<ext>` (keep extension, UUID name). Full-size only, no thumbnails in MVP.
 - Folder missing on launch → prompt re-link repair dialog; block new posts until re-linked.
 - Do not introduce a server DB, cloud sync, or ORM without asking first.
+
+Implementation status: text entries are live (`entries` + `entry_tags` tables in `pde.sqlite`, commands `create_entry` / `list_entries` / `delete_entry` behind the `EntryStore` trait). Images, folder pick, re-link, and settings are decided but not built yet.
 
 ## UI — brutalist 2000s, inspired by https://typesafe.ai/ (see ADR-006)
 
@@ -66,14 +68,15 @@ Rules for tags (see ADR-002):
 - Dense text layout, system/mono fonts, explicit `[brackets]`, version stamps like `TS.AI.0S1` are welcome.
 - Facebook-like composer on top (Dutch PDE tone, e.g. "Waar heb je vandaag aan gewerkt?"), feed below (newest-first), tag filter row (10 chips + `zonder tag` + clear).
 - UI chrome in Dutch. LEF labels already NL.
+- Frameless window (`decorations: false`) with a custom `Titlebar`: drag-to-move, double-click toggles maximize, min/max/close buttons.
+- Styling via Tailwind v4 utilities (no separate CSS framework).
 - Soft-delete needs confirm dialog; no undo toast, no restore UI in MVP (ADR-005).
-- No UI framework / CSS library in MVP — plain CSS only unless permission granted.
 
 ## Stack / Languages
 
 - Desktop app built with Tauri v2 (mobile possible later, explicitly not a prio).
-- Backend: Rust in `src-tauri/` (`src/main.rs`, `src/lib.rs`, `tauri.conf.json`, `Cargo.toml`).
-- Frontend: React 19 + TypeScript + Vite in `src/` (`App.tsx`, `main.tsx`, `App.css`), npm manager.
+- Backend: Rust in `src-tauri/` (`lib.rs` commands + `AppState`, `store` trait, `sqlite_store`, `error`, `migrations/`, `tauri.conf.json`, `Cargo.toml`). Deps: `sqlx` (sqlite), `thiserror`.
+- Frontend: React 19 + TypeScript + Vite + Tailwind v4 in `src/` (`App.tsx`, `main.tsx`, `App.css`, `components/`, `hooks/`, `api/`), npm manager.
 - App meta: `productName: portflow-done-easy`, `identifier: com.portflow.doneeasy`, devUrl `http://localhost:1420`, `frontendDist: ../dist`.
 
 Commands:

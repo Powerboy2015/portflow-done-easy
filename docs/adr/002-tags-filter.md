@@ -21,3 +21,6 @@ AGENT.md: 1..n of 10 LEF competencies per proof, OR filter. Open: mandatory vs o
 
 ## Open follow-ups
 - Decide exact chip interaction for `zonder tag` + tags combo in UI build.
+
+## Implementation status (2026-10-11)
+- Tag storage is live (`entry_tags`, 0..n, validated in Rust). The filter row UI is not built yet.

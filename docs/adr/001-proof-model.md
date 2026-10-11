@@ -21,3 +21,6 @@ AGENT.md: each proof = text and/or image. Text is often description of image whe
 ## Open follow-ups
 - If abuse/perf issues appear, introduce caps + type whitelist (png/jpg/webp/gif).
 - Thumbnails deferred (see ADR-003: full-size only).
+
+## Implementation status (2026-10-11)
+- Images not built yet: composer is text-only and text-required for now. The `proof_images` table and copy-in flow land with the image feature.

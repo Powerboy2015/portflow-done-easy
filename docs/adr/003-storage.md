@@ -27,3 +27,8 @@ AGENT.md: user chooses folder first run (Tauri dialog); SQLite refers to folder 
 - Exact app-data path per OS via Tauri path API.
 - Migration story if user wants portable DB later.
 - Needs user approval to add `sqlx` + `tauri-plugin-sql`/`tauri-plugin-dialog`/`tauri-plugin-fs` per AGENT.md rule 2.
+
+## Implementation status (2026-10-11)
+- Live: `entries` + `entry_tags` in `pde.sqlite` (app-data), created + migrated on startup via embedded migrations. Commands `create_entry` / `list_entries` / `delete_entry` behind the `EntryStore` trait (`SqliteStore`, sqlx raw, `thiserror` errors).
+- Naming note: tables are `entries`/`entry_tags`, not `proofs`/`proof_tags` as sketched above. Rename or accept — open.
+- Pending: `proof_images`, `settings` (chosen folder), folder pick + re-link flow, `tauri-plugin-dialog`/`tauri-plugin-fs`.

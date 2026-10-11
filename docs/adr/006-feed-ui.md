@@ -23,3 +23,7 @@ Open: feed order, timestamp editability, filter persistence, UI language, Niveau
 - Backdate feature → backlog (diary use-case: "what you did today" vs "when you posted").
 - Niveau tooltip + Competenties overview + lef.hu.nl link → backlog.
 - Pagination/virtualization: undecided; revisit when feed grows (no-caps images make this load-bearing).
+
+## Implementation status (2026-10-11)
+- Live as decided: newest-first feed, `created_at` set by Rust at insert, Dutch chrome, Niveau hidden (data hardcoded).
+- Amendment: styling uses Tailwind v4 utilities, not plain CSS. Filter UI not built yet, so filter persistence is moot for now.

@@ -22,3 +22,6 @@ AGENT.md MVP excluded edit/delete. Grill surfaced mistake recovery: wrong text/t
 ## Open follow-ups
 - Restore/undelete UI → backlog.
 - Purge (hard-delete) job → backlog.
+
+## Implementation status (2026-10-11)
+- Live: `delete_entry` command sets `deleted_at`; feed hides soft-deleted rows; each card has an [x] button behind a confirm dialog. No restore UI, as decided.
