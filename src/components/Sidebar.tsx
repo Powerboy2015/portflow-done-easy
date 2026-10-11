@@ -5,15 +5,15 @@ type SidebarProps = {
   onSelect: (view: View) => void;
 };
 
-// Basis zonder kleur: actief/inactief vullen bg + text elk exact één keer in,
-// zodat er nooit conflicterende utilities (bg-white + bg-black) naast
-// elkaar staan — Tailwind-volgorde in de stylesheet is dan irrelevant.
+// Colorless base: active/inactive each set bg + text exactly once,
+// so conflicting utilities (bg-white + bg-black) never end up side by side
+// — Tailwind order in the stylesheet is then irrelevant.
 const NAV_BTN_BASE =
   "border-2 border-black px-2.5 py-2 text-left max-sm:flex-1";
 const NAV_BTN = `${NAV_BTN_BASE} bg-white hover:bg-black hover:text-white`;
 const NAV_BTN_ACTIVE = `${NAV_BTN_BASE} bg-black text-white`;
 
-// Module-level: geen inline component-definities (rerender-no-inline-components).
+// Module-level: no inline component definitions (rerender-no-inline-components).
 export function Sidebar({ view, onSelect }: SidebarProps) {
   return (
     <aside className="flex w-60 shrink-0 flex-col border-r-2 border-black bg-white max-sm:w-auto max-sm:border-r-0 max-sm:border-b-2">

@@ -1,14 +1,14 @@
 import { getCurrentWindow } from "@tauri-apps/api/window";
 
-// Alleen binnen Tauri bestaan venster-API's; in de browser (vite dev)
-// renderen we de balk zonder knoppen zodat er nooit dode controls staan.
+// Window APIs only exist inside Tauri; in the browser (vite dev)
+// we render the bar without buttons so there are never dead controls.
 const IN_TAURI =
   typeof window !== "undefined" && "__TAURI_INTERNALS__" in window;
 
 const TITLE_BTN =
   "border-2 border-white bg-black px-2 py-0.5 text-sm leading-none text-white hover:bg-white hover:text-black";
 
-// Alle vensteracties lopen via event handlers, geen effects/state nodig.
+// All window actions run via event handlers, no effects/state needed.
 async function handleMinimize() {
   await getCurrentWindow().minimize();
 }
@@ -21,13 +21,13 @@ async function handleClose() {
   await getCurrentWindow().close();
 }
 
-// Programmatisch slepen als aanvulling op data-tauri-drag-region (op
-// Windows volstaat het attribuut alleen niet altijd). Bewust géén
-// IN_TAURI-gate: buiten Tauri faalt de call en wordt de fout geslikt,
-// zodat een verkeerde runtime-detectie het slepen nooit kan breken.
-// De call staat synchroon in de mousedown-handler (geen await ervoor),
-// zodat Tauri hem als gebruikersgebaar accepteert. Kliks vanaf knoppen
-// worden overgeslagen zodat min/max/sluiten klikbaar blijven.
+// Programmatic dragging on top of data-tauri-drag-region (on
+// Windows the attribute alone is not always enough). Deliberately no
+// IN_TAURI gate: outside Tauri the call fails and the error is swallowed,
+// so a wrong runtime detection can never break dragging.
+// The call sits synchronously in the mousedown handler (no await before it),
+// so Tauri accepts it as a user gesture. Clicks from buttons
+// are skipped so min/max/close stay clickable.
 function handleDragMouseDown(e: {
   button: number;
   target: EventTarget | null;
@@ -37,15 +37,15 @@ function handleDragMouseDown(e: {
   if (typeof el?.closest === "function" && el.closest("button")) return;
   try {
     getCurrentWindow().startDragging().catch(() => {
-      // Geen Tauri-runtime (browser-dev): niets te slepen.
+      // No Tauri runtime (browser-dev): nothing to drag.
     });
   } catch {
-    // getCurrentWindow() zelf gooit buiten Tauri: ook negeren.
+    // getCurrentWindow() itself throws outside Tauri: ignore as well.
   }
 }
 
-// Module-level component; brutalist vensterbalk ter vervanging van de
-// native Windows-titelbalk (venster draait frameless, zie tauri.conf.json).
+// Module-level component; brutalist titlebar replacing the
+// native Windows titlebar (window runs frameless, see tauri.conf.json).
 export function Titlebar() {
   return (
     <header

@@ -1,12 +1,12 @@
 @import "tailwindcss";
 
-/* PDE-huisstijl als Tailwind v4-theme. Brief wint (AGENT.md + ADR-006):
-   brutalist 2000s — mono-first, vierkant, zichtbare borders, [brackets]. */
+/* PDE house style as Tailwind v4 theme. Brief wins (AGENT.md + ADR-006):
+   brutalist 2000s — mono-first, square, visible borders, [brackets]. */
 @theme {
   --font-mono: "Courier New", Courier, ui-monospace, Menlo, Consolas, monospace;
 }
 
-/* Zichtbare toetsenbordfocus — geen utility-variant voor global. */
+/* Visible keyboard focus — no utility variant for global. */
 :focus-visible {
   outline: 3px solid #000;
   outline-offset: 2px;

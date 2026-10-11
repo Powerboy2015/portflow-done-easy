@@ -5,7 +5,7 @@ import { BTN, HEADING, PANEL } from "./ui";
 type ComposerProps = {
   text: string;
   selectedTags: ReadonlySet<string>;
-  /** Simpele afgeleide waarde — direct uitrekenen, geen useMemo (rerender-simple-expression-in-memo). */
+  /** Simple derived value — compute directly, no useMemo (rerender-simple-expression-in-memo). */
   canSubmit: boolean;
   inputRef: RefObject<HTMLTextAreaElement | null>;
   onTextChange: (value: string) => void;
@@ -18,7 +18,7 @@ const CHIP_BASE =
 const CHIP = `${CHIP_BASE} bg-white hover:bg-black hover:text-white`;
 const CHIP_SELECTED = `${CHIP_BASE} bg-black text-white`;
 
-// Module-level component; interactielogica loopt via event handlers (rerender-move-effect-to-event).
+// Module-level component; interaction logic runs via event handlers (rerender-move-effect-to-event).
 export function Composer({
   text,
   selectedTags,

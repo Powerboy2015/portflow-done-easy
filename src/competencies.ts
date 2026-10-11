@@ -1,5 +1,5 @@
-// LEF competenties — source of truth: https://lef.hu.nl/ (zie AGENT.md).
-// Hardcoded, geen runtime fetch. Niveau 1-4 wordt NIET gerenderd in MVP (ADR-006).
+// LEF competencies — source of truth: https://lef.hu.nl/ (see AGENT.md).
+// Hardcoded, no runtime fetch. Levels 1-4 are NOT rendered in MVP (ADR-006).
 
 export type Competency = {
   slug: string;
@@ -129,7 +129,7 @@ export const COMPETENCIES: Competency[] = [
   },
 ];
 
-// O(1) lookup per slug i.p.v. herhaalde .find() (js-index-maps).
+// O(1) lookup per slug instead of repeated .find() (js-index-maps).
 export const COMPETENCY_BY_SLUG: ReadonlyMap<string, Competency> = new Map(
   COMPETENCIES.map((c) => [c.slug, c]),
 );

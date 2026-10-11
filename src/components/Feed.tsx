@@ -3,8 +3,8 @@ import { competencyLabel } from "../competencies";
 import type { Post } from "../types";
 import { HEADING, PANEL } from "./ui";
 
-// Statische JSX buiten het component zodat het niet per render wordt
-// aangemaakt (rendering-hoist-jsx).
+// Static JSX outside the component so it is not created per render
+// (rendering-hoist-jsx).
 const emptyFeed = (
   <p className="border border-dashed border-black p-3">
     [leeg] Nog geen posts. Schrijf hierboven wat je vandaag hebt gedaan.
@@ -15,8 +15,8 @@ type PostCardProps = {
   post: Post;
 };
 
-// Memo: de feed groeit terwijl elke toetsaanslag in de composer App
-// opnieuw rendert — kaarten met ongewijzigde props slaan dat over (rerender-memo).
+// Memo: the feed grows while every keystroke in the composer re-renders App
+// — cards with unchanged props skip that (rerender-memo).
 export const PostCard = memo(function PostCard({ post }: PostCardProps) {
   return (
     <li className="border-2 border-black bg-white p-2 [content-visibility:auto] [contain-intrinsic-size:auto_120px]">

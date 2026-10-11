@@ -91,3 +91,9 @@ Commands:
 3. NPM packages are allowed to be added, but ask first. Same propose-then-approve flow. No silent `npm install <x>`.
 
 When you need something new, state: what, why, alternatives considered, and what changes (files/deps/permissions). Do not proceed until the user says yes.
+
+4. Start a new branch for every feature that is worked on. Never commit feature work directly to `master` (the default/main branch). Branch naming: `feature/<short-kebab-description>` (e.g. `feature/feed-filter`). Create the branch from up-to-date `master` before starting work.
+5. Ask for confirmation before committing. When the feature is finished, present a summary of changes + `git status` / `git diff --stat` and wait for explicit user approval. Do not run `git commit` or `git push` without a yes.
+6. After approval, commit on the feature branch, then merge to `master` (merge or fast-forward; open a PR only if explicitly requested). Verify build/checks pass before merging, and confirm the working tree state to the user after the merge.
+7. Write all documentation in English: code comments, JSDoc, commit messages, and `docs/`. UI chrome stays Dutch (ADR-006); Dutch domain terms (competency names, `zonder tag`) keep their NL form.
+8. Always respond to the user in English.

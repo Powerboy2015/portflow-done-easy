@@ -14,11 +14,11 @@ function App() {
   const [view, setView] = useState<View>("feed");
   const composerInputRef = useRef<HTMLTextAreaElement>(null);
 
-  // Afgeleid tijdens render, geen effect/state (rerender-derived-state-no-effect).
-  // Simpele boolean — bewust geen useMemo (rerender-simple-expression-in-memo).
+  // Derived during render, no effect/state (rerender-derived-state-no-effect).
+  // Simple boolean — deliberately no useMemo (rerender-simple-expression-in-memo).
   const canSubmit = composerText.trim().length > 0;
 
-  // Functionele updates: stabiel zonder stale closures (rerender-functional-setstate).
+  // Functional updates: stable without stale closures (rerender-functional-setstate).
   function handleToggleTag(slug: string) {
     setComposerTags((prev) => {
       const next = new Set(prev);
@@ -40,7 +40,7 @@ function App() {
       tags: [...composerTags],
       createdAt: new Date(),
     };
-    // Session-only, nieuwste eerst. Nog geen backend.
+    // Session-only, newest first. No backend yet.
     setPosts((prev) => [post, ...prev]);
     setComposerText("");
     setComposerTags(new Set());
@@ -49,8 +49,8 @@ function App() {
 
   const isSettings = view === "settings";
 
-  // "Nieuwe post" doet iets zichtbaars: toon de composer en zet focus.
-  // rAF zodat focus ook werkt als de composer net gemount is (vanuit settings).
+  // Selecting "new" does something visible: show the composer and focus it.
+  // rAF so focus also works when the composer just mounted (from settings).
   function handleSelect(next: View) {
     setView(next);
     if (next === "new") {

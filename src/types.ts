@@ -1,9 +1,9 @@
-// Gedeelde domeintypes — direct importeren, geen barrel-file (bundle-barrel-imports).
+// Shared domain types — import directly, no barrel file (bundle-barrel-imports).
 
 export type Post = {
   id: number;
   text: string;
-  /** Competency-slugs uit competencies.ts, in gekozen volgorde. */
+  /** Competency slugs from competencies.ts, in chosen order. */
   tags: string[];
   createdAt: Date;
 };
