@@ -5,45 +5,19 @@ import { Feed } from "./components/Feed";
 import { SettingsPanel } from "./components/SettingsPanel";
 import { Sidebar } from "./components/Sidebar";
 import { Titlebar } from "./components/Titlebar";
-import type { Post, View } from "./types";
+import { useComposer } from "./hooks/useComposer";
+import { usePosts } from "./hooks/usePosts";
+import type { View } from "./types";
 
 function App() {
-  const [composerText, setComposerText] = useState("");
-  const [composerTags, setComposerTags] = useState<ReadonlySet<string>>(new Set());
-  const [posts, setPosts] = useState<Post[]>([]);
+  const { text, tags, canSubmit, setText, toggleTag, reset } = useComposer();
+  const { posts, addPost } = usePosts();
   const [view, setView] = useState<View>("feed");
   const composerInputRef = useRef<HTMLTextAreaElement>(null);
 
-  // Derived during render, no effect/state (rerender-derived-state-no-effect).
-  // Simple boolean — deliberately no useMemo (rerender-simple-expression-in-memo).
-  const canSubmit = composerText.trim().length > 0;
-
-  // Functional updates: stable without stale closures (rerender-functional-setstate).
-  function handleToggleTag(slug: string) {
-    setComposerTags((prev) => {
-      const next = new Set(prev);
-      if (next.has(slug)) {
-        next.delete(slug);
-      } else {
-        next.add(slug);
-      }
-      return next;
-    });
-  }
-
   function handlePlaatsen() {
-    const text = composerText.trim();
-    if (text.length === 0) return; // js-early-exit
-    const post: Post = {
-      id: Date.now(),
-      text,
-      tags: [...composerTags],
-      createdAt: new Date(),
-    };
-    // Session-only, newest first. No backend yet.
-    setPosts((prev) => [post, ...prev]);
-    setComposerText("");
-    setComposerTags(new Set());
+    if (!addPost(text, tags)) return; // js-early-exit
+    reset();
     setView("feed");
   }
 
@@ -74,12 +48,12 @@ function App() {
         ) : (
           <>
             <Composer
-              text={composerText}
-              selectedTags={composerTags}
+              text={text}
+              selectedTags={tags}
               canSubmit={canSubmit}
               inputRef={composerInputRef}
-              onTextChange={setComposerText}
-              onToggleTag={handleToggleTag}
+              onTextChange={setText}
+              onToggleTag={toggleTag}
               onSubmit={handlePlaatsen}
             />
             <Feed posts={posts} />
