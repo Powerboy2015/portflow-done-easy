@@ -53,7 +53,7 @@ export function Composer({
           disabled={!canSubmit}
           onClick={onSubmit}
         >
-          [Plaatsen]
+          [Toevoegen]
         </button>
       </div>
     </section>

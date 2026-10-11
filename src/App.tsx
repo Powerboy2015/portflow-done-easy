@@ -15,7 +15,7 @@ function App() {
   const [view, setView] = useState<View>("feed");
   const composerInputRef = useRef<HTMLTextAreaElement>(null);
 
-  function handlePlaatsen() {
+  function handleAddEntry() {
     if (!addPost(text, tags)) return; // js-early-exit
     reset();
     setView("feed");
@@ -54,7 +54,7 @@ function App() {
               inputRef={composerInputRef}
               onTextChange={setText}
               onToggleTag={toggleTag}
-              onSubmit={handlePlaatsen}
+              onSubmit={handleAddEntry}
             />
             <Feed posts={posts} />
           </>
