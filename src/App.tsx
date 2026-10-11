@@ -4,6 +4,7 @@ import { Composer } from "./components/Composer";
 import { Feed } from "./components/Feed";
 import { SettingsPanel } from "./components/SettingsPanel";
 import { Sidebar } from "./components/Sidebar";
+import { Titlebar } from "./components/Titlebar";
 import type { Post, View } from "./types";
 
 function App() {
@@ -61,10 +62,13 @@ function App() {
   }
 
   return (
-    <div className="flex min-h-screen border-t-4 border-black bg-white font-mono leading-[1.4] text-black max-sm:flex-col">
-      <Sidebar view={view} onSelect={handleSelect} />
+    <div className="flex min-h-screen flex-col bg-white font-mono leading-[1.4] text-black">
+      <Titlebar />
 
-      <main className="mx-auto w-full max-w-[800px] flex-1 p-4">
+      <div className="flex flex-1 max-sm:flex-col">
+        <Sidebar view={view} onSelect={handleSelect} />
+
+        <main className="mx-auto w-full max-w-[800px] flex-1 p-4">
         {isSettings ? (
           <SettingsPanel onBack={() => setView("feed")} />
         ) : (
@@ -82,6 +86,7 @@ function App() {
           </>
         )}
       </main>
+      </div>
     </div>
   );
 }
