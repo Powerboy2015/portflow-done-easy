@@ -13,7 +13,8 @@ type ComposerProps = {
   onSubmit: () => void;
 };
 
-const CHIP_BASE = "border-2 border-black px-2 py-1 text-[0.8rem]";
+const CHIP_BASE =
+  "block w-full border-b border-black px-2 py-1.5 text-left text-[0.8rem] last:border-b-0";
 const CHIP = `${CHIP_BASE} bg-white hover:bg-black hover:text-white`;
 const CHIP_SELECTED = `${CHIP_BASE} bg-black text-white`;
 
@@ -45,23 +46,39 @@ export function Composer({
         <legend className="px-1 font-bold">
           Competenties [optioneel, {selectedTags.size} gekozen]
         </legend>
-        <div className="flex flex-wrap gap-1.5">
-          {COMPETENCIES.map((c) => {
-            const selected = selectedTags.has(c.slug);
-            return (
-              <button
-                key={c.slug}
-                type="button"
-                className={selected ? CHIP_SELECTED : CHIP}
-                aria-pressed={selected}
-                title={c.beschrijving}
-                onClick={() => onToggleTag(c.slug)}
-              >
-                [{selected ? "x" : " "}] {c.label}
-              </button>
-            );
-          })}
-        </div>
+        <details
+          className="border-2 border-black"
+          onMouseEnter={(e) => {
+            e.currentTarget.open = true;
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.open = false;
+          }}
+        >
+          <summary className="cursor-pointer px-2 py-1.5 hover:bg-black hover:text-white">
+            {selectedTags.size > 0
+              ? `[v] ${selectedTags.size} gekozen — klik om te wijzigen`
+              : "[>] Kies competenties..."}
+          </summary>
+          <ul className="m-0 max-h-60 list-none overflow-y-auto border-t-2 border-black p-0">
+            {COMPETENCIES.map((c) => {
+              const selected = selectedTags.has(c.slug);
+              return (
+                <li key={c.slug} className="m-0 p-0">
+                  <button
+                    type="button"
+                    className={selected ? CHIP_SELECTED : CHIP}
+                    aria-pressed={selected}
+                    title={c.beschrijving}
+                    onClick={() => onToggleTag(c.slug)}
+                  >
+                    [{selected ? "x" : " "}] {c.label}
+                  </button>
+                </li>
+              );
+            })}
+          </ul>
+        </details>
       </fieldset>
       <div className="mt-2 flex items-center justify-between">
         <span className="text-[0.8rem]">[{text.trim().length} tekens]</span>
