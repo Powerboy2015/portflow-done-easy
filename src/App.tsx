@@ -1,50 +1,88 @@
-import { useState } from "react";
-import reactLogo from "./assets/react.svg";
-import { invoke } from "@tauri-apps/api/core";
+import { useRef, useState } from "react";
 import "./App.css";
+import { Composer } from "./components/Composer";
+import { Feed } from "./components/Feed";
+import { SettingsPanel } from "./components/SettingsPanel";
+import { Sidebar } from "./components/Sidebar";
+import type { Post, View } from "./types";
 
 function App() {
-  const [greetMsg, setGreetMsg] = useState("");
-  const [name, setName] = useState("");
+  const [composerText, setComposerText] = useState("");
+  const [composerTags, setComposerTags] = useState<ReadonlySet<string>>(new Set());
+  const [posts, setPosts] = useState<Post[]>([]);
+  const [view, setView] = useState<View>("feed");
+  const composerInputRef = useRef<HTMLTextAreaElement>(null);
 
-  async function greet() {
-    // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
-    setGreetMsg(await invoke("greet", { name }));
+  // Afgeleid tijdens render, geen effect/state (rerender-derived-state-no-effect).
+  // Simpele boolean — bewust geen useMemo (rerender-simple-expression-in-memo).
+  const canSubmit = composerText.trim().length > 0;
+
+  // Functionele updates: stabiel zonder stale closures (rerender-functional-setstate).
+  function handleToggleTag(slug: string) {
+    setComposerTags((prev) => {
+      const next = new Set(prev);
+      if (next.has(slug)) {
+        next.delete(slug);
+      } else {
+        next.add(slug);
+      }
+      return next;
+    });
+  }
+
+  function handlePlaatsen() {
+    const text = composerText.trim();
+    if (text.length === 0) return; // js-early-exit
+    const post: Post = {
+      id: Date.now(),
+      text,
+      tags: [...composerTags],
+      createdAt: new Date(),
+    };
+    // Session-only, nieuwste eerst. Nog geen backend.
+    setPosts((prev) => [post, ...prev]);
+    setComposerText("");
+    setComposerTags(new Set());
+    setView("feed");
+  }
+
+  const isSettings = view === "settings";
+
+  // "Nieuwe post" doet iets zichtbaars: toon de composer en zet focus.
+  // rAF zodat focus ook werkt als de composer net gemount is (vanuit settings).
+  function handleSelect(next: View) {
+    setView(next);
+    if (next === "new") {
+      requestAnimationFrame(() => {
+        composerInputRef.current?.scrollIntoView({ block: "nearest" });
+        composerInputRef.current?.focus({ preventScroll: true });
+      });
+    }
   }
 
   return (
-    <main className="container">
-      <h1>Welcome to Tauri + React</h1>
+    <div className="flex min-h-screen border-t-4 border-black bg-white font-mono leading-[1.4] text-black max-sm:flex-col">
+      <Sidebar view={view} onSelect={handleSelect} />
 
-      <div className="row">
-        <a href="https://vite.dev" target="_blank">
-          <img src="/vite.svg" className="logo vite" alt="Vite logo" />
-        </a>
-        <a href="https://tauri.app" target="_blank">
-          <img src="/tauri.svg" className="logo tauri" alt="Tauri logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <p>Click on the Tauri, Vite, and React logos to learn more.</p>
-
-      <form
-        className="row"
-        onSubmit={(e) => {
-          e.preventDefault();
-          greet();
-        }}
-      >
-        <input
-          id="greet-input"
-          onChange={(e) => setName(e.currentTarget.value)}
-          placeholder="Enter a name..."
-        />
-        <button type="submit">Greet</button>
-      </form>
-      <p>{greetMsg}</p>
-    </main>
+      <main className="mx-auto w-full max-w-[800px] flex-1 p-4">
+        {isSettings ? (
+          <SettingsPanel onBack={() => setView("feed")} />
+        ) : (
+          <>
+            <Composer
+              text={composerText}
+              selectedTags={composerTags}
+              canSubmit={canSubmit}
+              inputRef={composerInputRef}
+              onTextChange={setComposerText}
+              onToggleTag={handleToggleTag}
+              onSubmit={handlePlaatsen}
+            />
+            <Feed posts={posts} />
+          </>
+        )}
+      </main>
+    </div>
   );
 }
 
