@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import "./App.css";
 import { Composer } from "./components/Composer";
 import { Feed } from "./components/Feed";
@@ -11,15 +11,26 @@ import type { View } from "./types";
 
 function App() {
   const { text, tags, canSubmit, setText, toggleTag, reset } = useComposer();
-  const { posts, addPost } = usePosts();
+  const { posts, addPost, removePost, isSaving, error } = usePosts();
   const [view, setView] = useState<View>("feed");
   const composerInputRef = useRef<HTMLTextAreaElement>(null);
 
-  function handleAddEntry() {
-    if (!addPost(text, tags)) return; // js-early-exit
+  async function handleAddEntry() {
+    const added = await addPost(text, tags);
+    if (!added) return; // js-early-exit
     reset();
     setView("feed");
   }
+
+  // Delete requires confirmation (ADR-005); the entry only disappears
+  // when the backend confirms.
+  const handleDeleteEntry = useCallback(
+    (id: number) => {
+      if (!window.confirm("Deze entry verwijderen?")) return;
+      void removePost(id);
+    },
+    [removePost],
+  );
 
   const isSettings = view === "settings";
 
@@ -55,8 +66,10 @@ function App() {
               onTextChange={setText}
               onToggleTag={toggleTag}
               onSubmit={handleAddEntry}
+              isSaving={isSaving}
+              error={error}
             />
-            <Feed posts={posts} />
+            <Feed posts={posts} onDelete={handleDeleteEntry} />
           </>
         )}
       </main>

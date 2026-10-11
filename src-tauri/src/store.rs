@@ -14,7 +14,7 @@ use crate::error::DbError;
 /// A stored journal entry with its tags.
 ///
 /// Serialized camelCase for the TypeScript `Post` shape (`createdAt`).
-#[derive(Debug, Clone, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, serde::Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Entry {
     /// Row id, ascending with insertion order.

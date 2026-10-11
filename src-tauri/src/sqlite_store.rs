@@ -36,9 +36,12 @@ impl SqliteStore {
         if let Some(parent) = db_path.parent() {
             std::fs::create_dir_all(parent)?;
         }
+        // `busy_timeout` makes concurrent readers/writers wait instead of
+        // failing instantly with SQLITE_BUSY.
         let options = SqliteConnectOptions::new()
             .filename(db_path)
-            .create_if_missing(true);
+            .create_if_missing(true)
+            .busy_timeout(std::time::Duration::from_secs(5));
         let pool = SqlitePoolOptions::new().connect_with(options).await?;
         migrate(&pool).await?;
         Ok(Self { pool })
@@ -62,19 +65,22 @@ impl EntryStore for SqliteStore {
         Box::pin(async move {
             let (text, tags) = normalize(text, tags)?;
             let created_at = now_millis();
+            // One transaction: a tag failure must not leave an orphan entry.
+            let mut tx = self.pool.begin().await?;
             let id = sqlx::query("INSERT INTO entries (text, created_at) VALUES (?, ?)")
                 .bind(&text)
                 .bind(created_at)
-                .execute(&self.pool)
+                .execute(&mut *tx)
                 .await?
                 .last_insert_rowid();
             for tag in &tags {
                 sqlx::query("INSERT OR IGNORE INTO entry_tags (entry_id, tag_slug) VALUES (?, ?)")
                     .bind(id)
                     .bind(tag)
-                    .execute(&self.pool)
+                    .execute(&mut *tx)
                     .await?;
             }
+            tx.commit().await?;
             Ok(Entry {
                 id,
                 text,

@@ -13,15 +13,25 @@ const emptyFeed = (
 
 type PostCardProps = {
   post: Post;
+  onDelete: (id: number) => void;
 };
 
 // Memo: the feed grows while every keystroke in the composer re-renders App
 // — cards with unchanged props skip that (rerender-memo).
-export const PostCard = memo(function PostCard({ post }: PostCardProps) {
+export const PostCard = memo(function PostCard({ post, onDelete }: PostCardProps) {
   return (
     <li className="border-2 border-black bg-white p-2 [content-visibility:auto] [contain-intrinsic-size:auto_120px]">
       <div className="mb-1.5 flex justify-between border-b border-black pb-1 text-xs">
         <span>{post.createdAt.toLocaleString("nl-NL")}</span>
+        <button
+          type="button"
+          className="border border-black px-1 leading-none hover:bg-black hover:text-white"
+          aria-label="Entry verwijderen"
+          title="Verwijderen"
+          onClick={() => onDelete(post.id)}
+        >
+          <span aria-hidden="true">[x]</span>
+        </button>
       </div>
       <p className="m-0 break-words whitespace-pre-wrap">{post.text}</p>
       {post.tags.length > 0 ? (
@@ -39,9 +49,10 @@ export const PostCard = memo(function PostCard({ post }: PostCardProps) {
 
 type FeedProps = {
   posts: Post[];
+  onDelete: (id: number) => void;
 };
 
-export function Feed({ posts }: FeedProps) {
+export function Feed({ posts, onDelete }: FeedProps) {
   return (
     <section className={PANEL} aria-labelledby="pde-feed-titel">
       <h2 id="pde-feed-titel" className={HEADING}>
@@ -52,7 +63,7 @@ export function Feed({ posts }: FeedProps) {
       ) : (
         <ul className="m-0 flex list-none flex-col gap-2 p-0">
           {posts.map((post) => (
-            <PostCard key={post.id} post={post} />
+            <PostCard key={post.id} post={post} onDelete={onDelete} />
           ))}
         </ul>
       )}

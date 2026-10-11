@@ -11,6 +11,10 @@ type ComposerProps = {
   onTextChange: (value: string) => void;
   onToggleTag: (slug: string) => void;
   onSubmit: () => void;
+  /** Save in flight — submit stays disabled against double-clicks. */
+  isSaving: boolean;
+  /** Backend failure message, if any. */
+  error: string | null;
 };
 
 // Module-level component; interaction logic runs via event handlers (rerender-move-effect-to-event).
@@ -24,6 +28,8 @@ export function Composer({
   onTextChange,
   onToggleTag,
   onSubmit,
+  isSaving,
+  error,
 }: ComposerProps) {
   return (
     <section className={PANEL} aria-labelledby="pde-composer-titel">
@@ -50,12 +56,17 @@ export function Composer({
         <button
           type="button"
           className={BTN}
-          disabled={!canSubmit}
+          disabled={!canSubmit || isSaving}
           onClick={onSubmit}
         >
           [Toevoegen]
         </button>
       </div>
+      {error ? (
+        <p role="alert" className="mt-2 border-2 border-black bg-black px-2 py-1 text-white">
+          [{error}]
+        </p>
+      ) : null}
     </section>
   );
 }
