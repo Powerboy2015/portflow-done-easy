@@ -16,7 +16,7 @@ const NAV_BTN_ACTIVE = `${NAV_BTN_BASE} bg-black text-white`;
 // Module-level: no inline component definitions (rerender-no-inline-components).
 export function Sidebar({ view, onSelect }: SidebarProps) {
   return (
-    <aside className="flex w-60 shrink-0 flex-col border-r-2 border-black bg-white max-sm:w-auto max-sm:border-r-0 max-sm:border-b-2">
+    <aside className="flex w-60 shrink-0 flex-col border-r-2 border-black bg-white select-none max-sm:w-auto max-sm:border-r-0 max-sm:border-b-2">
       <div className="flex flex-col gap-0.5 border-b-2 border-black p-3">
         <span className="text-xl font-bold">[PDE]</span>
         <span className="text-xs">portflow-done-easy</span>

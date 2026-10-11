@@ -21,7 +21,7 @@ type PostCardProps = {
 export const PostCard = memo(function PostCard({ post, onDelete }: PostCardProps) {
   return (
     <li className="border-2 border-black bg-white p-2 [content-visibility:auto] [contain-intrinsic-size:auto_120px]">
-      <div className="mb-1.5 flex justify-between border-b border-black pb-1 text-xs">
+      <div className="mb-1.5 flex justify-between border-b border-black pb-1 text-xs select-none">
         <span>{post.createdAt.toLocaleString("nl-NL")}</span>
         <button
           type="button"
@@ -35,7 +35,7 @@ export const PostCard = memo(function PostCard({ post, onDelete }: PostCardProps
       </div>
       <p className="m-0 break-words whitespace-pre-wrap">{post.text}</p>
       {post.tags.length > 0 ? (
-        <div className="mt-2 flex flex-wrap gap-1.5 border-t border-black pt-1.5">
+        <div className="mt-2 flex flex-wrap gap-1.5 border-t border-black pt-1.5 select-none">
           {post.tags.map((slug) => (
             <span key={slug} className="border border-black px-1 text-xs">
               [{competencyLabel(slug)}]

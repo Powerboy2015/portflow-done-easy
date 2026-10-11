@@ -52,7 +52,7 @@ export function Composer({
         />
       </div>
       <div className="mt-2 flex items-center justify-between">
-        <span className="text-[0.8rem]">[{text.trim().length} tekens]</span>
+        <span className="text-[0.8rem] select-none">[{text.trim().length} tekens]</span>
         <button
           type="button"
           className={BTN}

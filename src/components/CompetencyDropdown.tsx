@@ -24,15 +24,7 @@ export const CompetencyDropdown = memo(function CompetencyDropdown({
       aria-label={`Competenties, optioneel, ${selectedTags.size} gekozen`}
       className="border-t-2 border-black"
     >
-      <details
-        className="relative"
-        onMouseEnter={(e) => {
-          e.currentTarget.open = true;
-        }}
-        onMouseLeave={(e) => {
-          e.currentTarget.open = false;
-        }}
-      >
+      <details className="relative">
         <summary className="cursor-pointer px-2 py-1 text-[0.8rem] hover:bg-black hover:text-white">
           {selectedTags.size > 0
             ? `[v] Competenties [${selectedTags.size} gekozen] — wijzig`
